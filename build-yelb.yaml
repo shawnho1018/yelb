@@ -1,0 +1,65 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: kaniko-build-yelb
+spec:
+  restartPolicy: Never
+  volumes:
+  - name: workspace
+  - name: kaniko-secret
+    secret:
+      secretName: kaniko-secret
+  containers:
+  - name: build-ui
+    image: gcr.io/kaniko-project/executor:latest
+    args:
+      - "--context=/workspace/yelb-ui"
+      - "--dockerfile=/workspace/yelb-ui/Dockerfile"
+      - "--destination=gcr.io/waynean-shawn/yelb-ui:latest"
+    volumeMounts:
+    - name: workspace
+      mountPath: /workspace
+    - name: kaniko-secret
+      mountPath: /secret/
+    env:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /secret/kaniko-secret.json
+  - name: build-db
+    image: gcr.io/kaniko-project/executor:latest
+    args:
+      - "--context=/workspace/yelb-db"
+      - "--dockerfile=/workspace/yelb-db/Dockerfile"
+      - "--destination=gcr.io/waynean-shawn/yelb-db:latest"
+    volumeMounts:
+    - name: workspace
+      mountPath: /workspace
+    - name: kaniko-secret
+      mountPath: /secret/
+    env:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /secret/kaniko-secret.json
+  - name: build-appserver
+    image: gcr.io/kaniko-project/executor:latest
+    args:
+      - "--context=/workspace/yelb-appserver"
+      - "--dockerfile=/workspace/yelb-appserver/Dockerfile"
+      - "--destination=gcr.io/waynean-shawn/yelb-appserver:latest"
+    volumeMounts:
+    - name: workspace
+      mountPath: /workspace
+    - name: kaniko-secret
+      mountPath: /secret/
+    env:
+      - name: GOOGLE_APPLICATION_CREDENTIALS
+        value: /secret/kaniko-secret.json
+  initContainers:
+  - name: git-clone
+    image: alpine
+    command: ["sh", "-c"]
+    args:
+    - |
+      apk add --no-cache git &&
+      git clone git://github.com/mreferre/yelb /workspace
+    volumeMounts:
+    - name: workspace
+      mountPath: /workspace
