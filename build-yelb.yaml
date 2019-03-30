@@ -59,7 +59,7 @@ spec:
     args:
     - |
       apk add --no-cache git &&
-      git clone git://github.com/mreferre/yelb /workspace
+      git clone https://github.com/shawnho1018/yelb.git /workspace
     volumeMounts:
     - name: workspace
       mountPath: /workspace
