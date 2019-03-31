@@ -25,36 +25,15 @@ spec:
       - name: build-ui
         image: gcr.io/kaniko-project/executor:latest
         args:
-          - "--context=/workspace/yelb-ui"
           - "--dockerfile=/workspace/yelb-ui/Dockerfile"
+          - "--context=/workspace/yelb-ui"
           - "--destination=shawnho1976/cicd:yelb-ui"
         volumeMounts:
         - name: workspace
           mountPath: /workspace
         - name: docker-secret
           mountPath: /root/.docker
-      - name: build-db
-        image: gcr.io/kaniko-project/executor:latest
-        args:
-          - "--dockerfile=/workspace/yelb-db/Dockerfile"
-          - "--context=/workspace/yelb-db"
-          - "--destination=shawnho1976/cicd:yelb-db"
-        volumeMounts:
-        - name: workspace
-          mountPath: /workspace
-        - name: docker-secret
-          mountPath: /root/.docker
-      - name: build-appserver
-        image: gcr.io/kaniko-project/executor:latest
-        args:
-          - "--context=/workspace/yelb-appserver"
-          - "--dockerfile=/workspace/yelb-appserver/Dockerfile"
-          - "--destination=shawnho1976/cicd:yelb-appserver"
-        volumeMounts:
-        - name: workspace
-          mountPath: /workspace
-        - name: docker-secret
-          mountPath: /root/.docker
+          
       initContainers:
       - name: git-clone
         image: alpine

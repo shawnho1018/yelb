@@ -1,13 +1,9 @@
 # This should work on Kubernetes deployments that have LoadBalancer support
 apiVersion: v1
 kind: Namespace
-metadata: {
-  "name": "green"
-  "labels": {
-    "name": "green"
-  }
-}
---
+metadata:
+  name: green
+---
 apiVersion: v1
 kind: Service
 metadata:
@@ -92,7 +88,7 @@ spec:
     spec:
       containers:
       - name: yelb-ui
-        image: gcr.io/waynean-shawn/yelb-ui:latest
+        image: shawnho1976/cicd:yelb-ui
         ports:
         - containerPort: 80
 ---
@@ -136,7 +132,7 @@ spec:
     spec:
       containers:
       - name: yelb-db
-        image: gcr.io/waynean-shawn/yelb-db:latest
+        image: shawnho1976/cicd:yelb-db
         ports:
         - containerPort: 5432
 ---
@@ -158,6 +154,6 @@ spec:
     spec:
       containers:
       - name: yelb-appserver
-        image: gcr.io/waynean-shawn/yelb-appserver:latest
+        image: shawnho1976/cicd:yelb-appserver
         ports:
         - containerPort: 4567
