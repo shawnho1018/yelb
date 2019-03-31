@@ -12,7 +12,6 @@ spec:
     spec:
       restartPolicy: Never
       volumes:
-      - name: workspace
       - name: docker-secret
         projected:
           sources:
@@ -21,6 +20,8 @@ spec:
               items:
                 - key: .dockerconfigjson
                   path: config.json
+      - name: workspace
+        emptyDir: {}
       containers:
       - name: build-ui
         image: gcr.io/kaniko-project/executor:latest

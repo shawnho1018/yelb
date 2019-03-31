@@ -89,6 +89,7 @@ spec:
       containers:
       - name: yelb-ui
         image: shawnho1976/cicd:yelb-ui
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
 ---
