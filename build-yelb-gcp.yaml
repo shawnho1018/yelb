@@ -13,48 +13,52 @@ spec:
       restartPolicy: Never
       volumes:
       - name: workspace
-      - name: docker-secret
-        projected:
-          sources:
-          - secret:
-              name: docker-secret
-              items:
-                - key: .dockerconfigjson
-                  path: config.json
+      - name: kaniko-secret
+        secret:
+          secretName: kaniko-secret
       containers:
       - name: build-ui
         image: gcr.io/kaniko-project/executor:latest
         args:
           - "--context=/workspace/yelb-ui"
           - "--dockerfile=/workspace/yelb-ui/Dockerfile"
-          - "--destination=shawnho1976/cicd:yelb-ui"
+          - "--destination=gcr.io/waynean-shawn/yelb-ui:latest"
         volumeMounts:
         - name: workspace
           mountPath: /workspace
-        - name: docker-secret
-          mountPath: /root/.docker
+        - name: kaniko-secret
+          mountPath: /secret/
+        env:
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: /secret/kaniko-secret.json
       - name: build-db
         image: gcr.io/kaniko-project/executor:latest
         args:
           - "--dockerfile=/workspace/yelb-db/Dockerfile"
           - "--context=/workspace/yelb-db"
-          - "--destination=shawnho1976/cicd:yelb-db"
+          - "--destination=gcr.io/waynean-shawn/yelb-db:latest"
         volumeMounts:
         - name: workspace
           mountPath: /workspace
-        - name: docker-secret
-          mountPath: /root/.docker
+        - name: kaniko-secret
+          mountPath: /secret
+        env:
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: /secret/kaniko-secret.json
       - name: build-appserver
         image: gcr.io/kaniko-project/executor:latest
         args:
           - "--context=/workspace/yelb-appserver"
           - "--dockerfile=/workspace/yelb-appserver/Dockerfile"
-          - "--destination=shawnho1976/cicd:yelb-appserver"
+          - "--destination=gcr.io/waynean-shawn/yelb-appserver:latest"
         volumeMounts:
         - name: workspace
           mountPath: /workspace
-        - name: docker-secret
-          mountPath: /root/.docker
+        - name: kaniko-secret
+          mountPath: /secret/
+        env:
+          - name: GOOGLE_APPLICATION_CREDENTIALS
+            value: /secret/kaniko-secret.json
       initContainers:
       - name: git-clone
         image: alpine
