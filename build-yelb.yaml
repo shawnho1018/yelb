@@ -33,8 +33,10 @@ spec:
         - name: workspace
           mountPath: /workspace
         - name: docker-secret
-          mountPath: /root/.docker
-          
+          mountPath: /kaniko/.docker
+        env:
+        - name: DOCKER_CONFIG
+          value: /kaniko/.docker
       initContainers:
       - name: git-clone
         image: alpine
