@@ -1,7 +1,9 @@
 
 ## Demonstrate CI-CD with Yelb
 I add two yaml files to demonstrate the CI/CD pipelines to automatically link vRealize CodeStream to Github.
-Modify
+build-yelb.yaml would use kaniko to rebuild the yelb file to push the results onto dockerhub.
+yelb-dep.yaml would re-deploy the newly built image onto the desired kubernetes cluster.
+
 #### Why Yelb 
 
 Yelb is an app I wrote from scratch (leveraging existing frameworks and tools such as Sinatra, Clarity and others). 
