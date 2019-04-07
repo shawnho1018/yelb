@@ -1,0 +1,50 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: kaniko-build-yelb-job
+spec:
+  completions: 1
+  ttlSecondsAfterFinished: 60
+  template:
+    metadata:
+      name: kaniko-build-yelb-job
+      namespace: default
+    spec:
+      restartPolicy: Never
+      volumes:
+      - name: docker-secret
+        projected:
+          sources:
+          - secret:
+              name: docker-secret
+              items:
+                - key: .dockerconfigjson
+                  path: config.json
+      - name: workspace
+        emptyDir: {}
+      containers:
+      - name: build-ui
+        image: gcr.io/kaniko-project/executor:latest
+        args:
+          - "--dockerfile=/workspace/yelb-ui/Dockerfile"
+          - "--context=/workspace/yelb-ui"
+          - "--destination=shawnho1976/cicd:yelb-ui"
+        volumeMounts:
+        - name: workspace
+          mountPath: /workspace
+        - name: docker-secret
+          mountPath: /root/.docker
+        #env:
+        #- name: DOCKER_CONFIG
+        #  value: /kaniko/.docker
+      initContainers:
+      - name: git-clone
+        image: alpine
+        command: ["sh", "-c"]
+        args:
+        - |
+          apk add --no-cache git &&
+          git clone https://github.com/shawnho1018/yelb.git /workspace
+        volumeMounts:
+        - name: workspace
+          mountPath: /workspace
