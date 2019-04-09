@@ -75,6 +75,7 @@ spec:
       labels:
         app: yelb-ui
         tier: frontend
+        secgroup: web-tier
     spec:
       containers:
       - name: yelb-ui
@@ -97,6 +98,7 @@ spec:
       labels:
         app: redis-server
         tier: cache
+        secgroup: cache-tier
     spec:
       containers:
       - name: redis-server
@@ -118,6 +120,7 @@ spec:
       labels:
         app: yelb-db
         tier: backenddb
+        secgroup: db-tier
     spec:
       containers:
       - name: yelb-db
@@ -139,6 +142,7 @@ spec:
       labels:
         app: yelb-appserver
         tier: middletier
+        secgroup: app-tier
     spec:
       containers:
       - name: yelb-appserver
