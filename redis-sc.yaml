@@ -1,0 +1,9 @@
+kind: StorageClass
+apiVersion: storage.k8s.io/v1
+metadata:
+  name: thin-disk
+provisioner: kubernetes.io/vsphere-volume
+parameters:
+  datastore: VxRail-Virtual-SAN-Datastore-8d123d95-6f79-445f-846b-a9b7b8e09071
+  diskformat: thin
+  fstype: ext3
