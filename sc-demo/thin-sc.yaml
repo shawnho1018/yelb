@@ -4,6 +4,6 @@ metadata:
   name: thin-disk
 provisioner: kubernetes.io/vsphere-volume
 parameters:
-  datastore: VxRail-Virtual-SAN-Datastore-8d123d95-6f79-445f-846b-a9b7b8e09071
+  datastore: vsanDatastore
   diskformat: thin
   fstype: ext3
