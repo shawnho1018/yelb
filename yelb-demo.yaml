@@ -52,7 +52,7 @@ metadata:
     app: yelb-ui
     tier: frontend
 spec:
-  type: LoadBalancer
+  type: LoadBalancer 
   ports:
   - port: 80
     protocol: TCP
@@ -61,40 +61,48 @@ spec:
     app: yelb-ui
     tier: frontend
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1 
 kind: Deployment
 metadata:
   name: yelb-ui
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: yelb-ui
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1  
   template:
     metadata:
       labels:
         app: yelb-ui
         tier: frontend
         secgroup: web-tier
-      annotations:
-        prometheus.io/scrape: 'true'
     spec:
       containers:
       - name: yelb-ui
-        image: harbor.syspks.com/yelb-demo/yelb-ui:0.3
+        image: shawnho1976/cicd:yelb-ui
+        imagePullPolicy: Always
         ports:
         - containerPort: 80
-        resources:
-          requests:
-            memory: "32Mi"
-            cpu: "1m"
-          limits:
-            memory: "256Mi"
-            cpu: "100m"
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: redis-server
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: redis-server
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+       maxSurge: 1
+       maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -104,23 +112,24 @@ spec:
     spec:
       containers:
       - name: redis-server
-        image: harbor.syspks.com/yelb-demo/redis:4.0.2
+        image: redis:4.0.2
         ports:
         - containerPort: 6379
-        volumeMounts:
-        - name: redis-data
-          mountPath: /data
-      volumes:
-      - name: redis-data
-        persistentVolumeClaim:
-          claimName: redis-claim
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: yelb-db
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: yelb-db
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -130,24 +139,24 @@ spec:
     spec:
       containers:
       - name: yelb-db
-        image:  harbor.syspks.com/yelb-demo/yelb-db:0.3
+        image: shawnho1976/cicd:yelb-db
         ports:
         - containerPort: 5432
-        volumeMounts:
-        - name: postgresql-data
-          mountPath: /var/lib/postgresql/data
-          subPath: postgresql
-      volumes:
-      - name: postgresql-data
-        persistentVolumeClaim:
-          claimName: postgresql-claim
 ---
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: yelb-appserver
 spec:
   replicas: 1
+  selector:
+    matchLabels:
+      app: yelb-appserver
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 1
   template:
     metadata:
       labels:
@@ -157,6 +166,6 @@ spec:
     spec:
       containers:
       - name: yelb-appserver
-        image:  harbor.syspks.com/yelb-demo/yelb-appserver:0.3
+        image: shawnho1976/cicd:yelb-appserver
         ports:
         - containerPort: 4567
